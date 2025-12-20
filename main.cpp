@@ -56,27 +56,7 @@ int main() {
             }
 
             else if (pilih == 4) {
-                cout << "\n=== STATISTIK MARKET ===" << endl;
-
-                addressParent p1 = playerGoldTerbanyak(LP);
-                if (p1 != nullptr) {
-                    cout << "Gold terbanyak: "
-                         << p1->info.username << " ("
-                         << p1->info.gold << ")" << endl;
-                }
-
-                addressParent p2 = playerPengeluaranTerbesar(LP);
-                if (p2 != nullptr) {
-                    cout << "Pengeluaran terbesar: "
-                         << p2->info.username << " ("
-                         << p2->info.totalOutcome << ")" << endl;
-                }
-
-                cout << "Player tanpa item:" << endl;
-                playerTanpaItem(LP);
-
-                cout << "Jumlah item tanpa relasi: "
-                     << countChildWithoutRelasi(LC, LP) << endl;
+                showStatistikMarket(LP, LC);
             }
         }
 

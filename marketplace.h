@@ -90,6 +90,7 @@ void showChildFromParent(addressParent P);
 void showAllParentWithChild(ListParent LP);
 void showAllChildWithParent(ListParent LP, ListChild LC);
 void showParentFromChild(ListParent LP, addressChild C);
+void showStatistikMarket(ListParent LP, ListChild LC);
 
 // COUNT / STATISTIK
 int countRelasiParent(addressParent P);

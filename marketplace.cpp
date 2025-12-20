@@ -226,13 +226,59 @@ void showAllParentWithChild(ListParent LP) {
 }
 
 void showAllChildWithParent(ListParent LP, ListChild LC) {
-    addressChild C = LC.first;
+    addressChild C;
+    addressParent P;
+    bool found;
+    string seller;
+
+    cout << "\n====================== MARKET ======================\n";
+    cout << "| Nama Item           | Harga | Weapon | Penjual       |\n";
+    cout << "====================================================\n";
+
+    C = LC.first;
+
+    if (C == nullptr) {
+        cout << "| (Tidak ada item di market)                        |\n";
+    }
+
     while (C != nullptr) {
-        cout << "Item: " << C->info.namaItem << " | Seller: ";
-        showParentFromChild(LP, C);
+
+        seller = "-";
+        found = false;
+
+        P = LP.first;
+        while (P != nullptr) {
+            if (!found && findRelasi(P, C) != nullptr) {
+                seller = P->info.username;
+                found = true;
+            }
+            P = P->next;
+        }
+
+        cout << "| ";
+        cout << C->info.namaItem;
+        cout << "              ";
+        cout << "| ";
+        cout << C->info.harga;
+        cout << "     ";
+
+        if (C->info.isWeapon)
+            cout << "| Yes    ";
+        else
+            cout << "| No     ";
+
+        cout << "| ";
+        cout << seller;
+        cout << "           ";
+
+        cout << "|\n";
+
         C = C->next;
     }
+
+    cout << "====================================================\n";
 }
+
 
 void showParentFromChild(ListParent LP, addressChild C) {
     addressParent P = LP.first;
@@ -245,6 +291,45 @@ void showParentFromChild(ListParent LP, addressChild C) {
     }
     cout << "None" << endl;
 }
+
+void showStatistikMarket(ListParent LP, ListChild LC) {
+    addressParent pGold;
+    addressParent pOut;
+
+    cout << "\n================= STATISTIK MARKET =================\n";
+    cout << "| Kategori                | Player        | Nilai |\n";
+    cout << "====================================================\n";
+
+    pGold = playerGoldTerbanyak(LP);
+    if (pGold != nullptr) {
+        cout << "| Gold Terbanyak          | ";
+        cout << pGold->info.username;
+        cout << "             | ";
+        cout << pGold->info.gold;
+        cout << "     |\n";
+    }
+
+    pOut = playerPengeluaranTerbesar(LP);
+    if (pOut != nullptr) {
+        cout << "| Pengeluaran Terbesar   | ";
+        cout << pOut->info.username;
+        cout << "             | ";
+        cout << pOut->info.totalOutcome;
+        cout << "     |\n";
+    }
+
+    cout << "| Item Tanpa Relasi      | -              | ";
+    cout << countChildWithoutRelasi(LC, LP);
+    cout << "     |\n";
+
+    cout << "====================================================\n";
+
+    cout << "\nPlayer Tanpa Item:\n";
+    cout << "-------------------------\n";
+    playerTanpaItem(LP);
+}
+
+
 
 // COUNT
 int countRelasiParent(addressParent P) {
@@ -296,13 +381,37 @@ void logout(addressParent &currentPlayer) {
 }
 
 void infoPlayer(addressParent P) {
-    cout << "Username: " << P->info.username << endl;
-    cout << "Gold: " << P->info.gold << endl;
-    cout << "Total Income: " << P->info.totalIncome << endl;
-    cout << "Total Outcome: " << P->info.totalOutcome << endl;
-    cout << "Item Dijual:" << endl;
-    showChildFromParent(P);
+    addressRelasi R;
+
+    cout << "\n=================== INFO PLAYER ===================\n";
+    cout << "Username       : " << P->info.username << endl;
+    cout << "Gold           : " << P->info.gold << endl;
+    cout << "Total Income   : " << P->info.totalIncome << endl;
+    cout << "Total Outcome  : " << P->info.totalOutcome << endl;
+
+    cout << "\nItem yang Sedang Dijual:\n";
+    cout << "-----------------------------------------------\n";
+    cout << "| Nama Item                                   |\n";
+    cout << "-----------------------------------------------\n";
+
+    R = P->relasi;
+
+    if (R == nullptr) {
+        cout << "| (Tidak ada item)                            |\n";
+    }
+
+    while (R != nullptr) {
+        cout << "| ";
+        cout << R->child->info.namaItem;
+        cout << "                                     ";
+        cout << "|\n";
+
+        R = R->next;
+    }
+
+    cout << "-----------------------------------------------\n";
 }
+
 
 void jualItem(ListChild &LC, addressParent P, infotypeChild dataItem) {
     addressChild C = createChild(dataItem);
