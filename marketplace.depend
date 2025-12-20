@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1766224031 source:d:\semester 3\struktur data\tugas-besar\marketplace\main.cpp
+	"marketplace.h"
+
+1766222216 d:\semester 3\struktur data\tugas-besar\marketplace\marketplace.h
+	<iostream>
+
+1766222280 source:d:\semester 3\struktur data\tugas-besar\marketplace\marketplace.cpp
+	"marketplace.h"
+
