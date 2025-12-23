@@ -1,12 +1,13 @@
 #include "marketplace.h"
 
-// Menu
+// Menu Functions (bersama)
 void menuUtama() {
     cout << "\n=== MARKETPLACE MMORPG ===\n";
     cout << "1. Daftar Player\n";
     cout << "2. Login\n";
     cout << "3. Lihat Market\n";
     cout << "4. Statistik Market\n";
+    cout << "5. Cari Player\n";
     cout << "0. Keluar\n";
     cout << "Pilih: ";
 }
@@ -18,59 +19,216 @@ void menuPlayer() {
     cout << "3. Jual Item\n";
     cout << "4. Beli Item\n";
     cout << "5. Hapus Item Sendiri\n";
+    cout << "6. Pindah Kepemilikan Item\n";
+    cout << "7. Cari Player\n";
+    cout << "8. Cari Item\n";
+    cout << "9. Edit Item\n";
     cout << "0. Logout\n";
     cout << "Pilih: ";
 }
-// CREATE LIST
+
+void menuStatistikMarket() {
+    cout << "\n=== STATISTIK MARKET ===\n";
+    cout << "1. Ringkasan Statistik\n";
+    cout << "2. Semua Player\n";
+    cout << "3. Semua Item\n";
+    cout << "4. Player & Item\n";
+    cout << "0. Kembali\n";
+    cout << "Pilih: ";
+}
+
+bool login(ListParent LP, string username, addressParent &currentPlayer) {
+    currentPlayer = findParent(LP, username);
+    return currentPlayer != nullptr;
+}
+
+void logout(addressParent &currentPlayer) {
+    currentPlayer = nullptr;
+}
+
+// Parent List Functions (rafly)
 void createListParent(ListParent &LP) {
     LP.first = nullptr;
 }
 
-void createListChild(ListChild &LC) {
-    LC.first = nullptr;
-}
-
-// CREATE NODE
 addressParent createParent(infotypeParent data) {
-    addressParent P = new elmlistParent;
+    addressParent P;
+    P = new elmlistParent;
     P->info = data;
     P->relasi = nullptr;
     P->next = nullptr;
     return P;
 }
 
-addressChild createChild(infotypeChild data) {
-    addressChild C = new elmlistChild;
-    C->info = data;
-    C->next = nullptr;
-    return C;
-}
-
-addressRelasi createRelasi(addressChild C) {
-    addressRelasi R = new elmRelasi;
-    R->child = C;
-    R->next = nullptr;
-    return R;
-}
-
-// INSERT
 void insertParent(ListParent &LP, addressParent P) {
-    if (LP.first == nullptr) {
+    if (LP.first == nullptr)
         LP.first = P;
-    } else {
+    else {
         addressParent Q = LP.first;
-        while (Q->next != nullptr) {
-            Q = Q->next;
-        }
+        while (Q->next) Q = Q->next;
         Q->next = P;
     }
 }
 
+addressParent findParent(ListParent LP, string username) {
+    addressParent P;
+    P = LP.first;
+    while (P) {
+        if (P->info.username == username)
+            return P;
+        P = P->next;
+    }
+    return nullptr;
+}
+
+void deleteParent(ListParent &LP, ListChild &LC, string username) {
+    addressParent prev, curr;
+
+    prev = nullptr;
+    curr = LP.first;
+    while (curr && curr->info.username != username) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr) {
+        addressRelasi R;
+        R = curr->relasi;
+        while (R) {
+            addressRelasi tmp;
+            tmp = R;
+
+            R = R->next;
+            deleteChild(LC, tmp->child);
+            delete tmp;
+        }
+
+        if (!prev) LP.first = curr->next;
+        else prev->next = curr->next;
+
+        delete curr;
+    }
+}
+
+void showAllParent(ListParent LP) {
+    cout << "\n==================== DAFTAR PLAYER ====================\n";
+    cout << "Username\tGold\tIncome\tOutcome\n";
+    cout << "------------------------------------------------------\n";
+
+    addressParent P;
+    P = LP.first;
+
+    if (P == nullptr) {
+        cout << "(Tidak ada player)\n";
+        return;
+    }
+
+    while (P != nullptr) {
+        cout << P->info.username << "\t"
+             << P->info.gold << "\t"
+             << P->info.totalIncome << "\t"
+             << P->info.totalOutcome << endl;
+        P = P->next;
+    }
+
+    cout << "======================================================\n";
+}
+
+
+void infoPlayer(addressParent P) {
+    cout << "\nUsername       : " << P->info.username << endl;
+    cout << "Gold           : " << P->info.gold << endl;
+    cout << "Total Income   : " << P->info.totalIncome << endl;
+    cout << "Total Outcome  : " << P->info.totalOutcome << endl;
+    cout << "Item Dijual:\n";
+    showChildFromParent(P);
+}
+
+addressParent playerGoldTerbanyak(ListParent LP) {
+    addressParent max;
+    addressParent P;
+
+    max = LP.first;
+    P = LP.first;
+
+    while (P != nullptr) {
+        if (P->info.gold > max->info.gold) {
+            max = P;
+        }
+        P = P->next;
+    }
+
+    return max;
+}
+
+
+addressParent playerPengeluaranTerbesar(ListParent LP) {
+    addressParent max;
+    addressParent P;
+
+    max = LP.first;
+    P = LP.first;
+
+    while (P != nullptr) {
+        if (P->info.totalOutcome > max->info.totalOutcome) {
+            max = P;
+        }
+        P = P->next;
+    }
+
+    return max;
+}
+
+
+void playerTanpaItem(ListParent LP) {
+    addressParent P;
+
+    P = LP.first;
+    while (P != nullptr) {
+        if (P->relasi == nullptr) {
+            cout << "- " << P->info.username << endl;
+        }
+        P = P->next;
+    }
+}
+
+
+void cariPlayer(ListParent LP, string username) {
+    addressParent P;
+
+    P = findParent(LP, username);
+    if (P != nullptr) {
+        infoPlayer(P);
+    } else {
+        cout << "Player tidak ditemukan." << endl;
+    }
+}
+
+
+// child List Functions (hafiz)
+
+void createListChild(ListChild &LC) {
+    LC.first = nullptr;
+}
+
+addressChild createChild(infotypeChild data) {
+    addressChild C;
+
+    C = new elmlistChild;
+    C->info = data;
+    C->next = nullptr;
+
+    return C;
+}
+
+
 void insertChild(ListChild &LC, addressChild C) {
+    addressChild Q;
+
     if (LC.first == nullptr) {
         LC.first = C;
     } else {
-        addressChild Q = LC.first;
+        Q = LC.first;
         while (Q->next != nullptr) {
             Q = Q->next;
         }
@@ -78,42 +236,13 @@ void insertChild(ListChild &LC, addressChild C) {
     }
 }
 
-void insertRelasi(addressParent P, addressChild C) {
-    addressRelasi R = createRelasi(C);
-    if (P->relasi == nullptr) {
-        P->relasi = R;
-    } else {
-        addressRelasi Q = P->relasi;
-        while (Q->next != nullptr) {
-            Q = Q->next;
-        }
-        Q->next = R;
-    }
-}
-
-// DELETE
-void deleteRelasi(addressParent P, addressChild C) {
-    addressRelasi prev = nullptr;
-    addressRelasi curr = P->relasi;
-
-    while (curr != nullptr && curr->child != C) {
-        prev = curr;
-        curr = curr->next;
-    }
-
-    if (curr != nullptr) {
-        if (prev == nullptr) {
-            P->relasi = curr->next;
-        } else {
-            prev->next = curr->next;
-        }
-        delete curr;
-    }
-}
 
 void deleteChild(ListChild &LC, addressChild C) {
-    addressChild prev = nullptr;
-    addressChild curr = LC.first;
+    addressChild prev;
+    addressChild curr;
+
+    prev = nullptr;
+    curr = LC.first;
 
     while (curr != nullptr && curr != C) {
         prev = curr;
@@ -130,26 +259,112 @@ void deleteChild(ListChild &LC, addressChild C) {
     }
 }
 
-void deleteParent(ListParent &LP, ListChild &LC, string username) {
-    addressParent prev = nullptr;
-    addressParent curr = LP.first;
 
-    while (curr != nullptr && curr->info.username != username) {
+addressChild findChild(ListChild LC, string namaItem) {
+    addressChild C;
+
+    C = LC.first;
+    while (C != nullptr) {
+        if (C->info.namaItem == namaItem) {
+            return C;
+        }
+        C = C->next;
+    }
+    return nullptr;
+}
+
+
+void showAllChild(ListChild LC) {
+    addressChild C;
+
+    cout << "\n====================== DAFTAR ITEM ======================\n";
+    cout << "Nama Item\tHarga\tWeapon\n";
+    cout << "--------------------------------------------------------\n";
+
+    C = LC.first;
+    if (C == nullptr) {
+        cout << "(Tidak ada item)\n";
+        cout << "========================================================\n";
+        return;
+    }
+
+    while (C != nullptr) {
+        cout << C->info.namaItem << "\t"
+             << C->info.harga << "\t"
+             << (C->info.isWeapon ? "Yes" : "No") << endl;
+        C = C->next;
+    }
+
+    cout << "========================================================\n";
+}
+
+
+void editItem(addressChild C, infotypeChild newData) {
+    C->info = newData;
+}
+
+void cariItem(ListParent LP, ListChild LC, string namaItem) {
+    addressChild C;
+
+    C = findChild(LC, namaItem);
+    if (C == nullptr) {
+        cout << "Item tidak ditemukan." << endl;
+        return;
+    }
+
+    cout << "Nama Item : " << C->info.namaItem << endl;
+    cout << "Harga     : " << C->info.harga << endl;
+    cout << "Weapon    : " << (C->info.isWeapon ? "Yes" : "No") << endl;
+    cout << "Penjual   : ";
+    showParentFromChild(LP, C);
+}
+
+
+// relation Functions (rizki)
+addressRelasi createRelasi(addressChild C) {
+    addressRelasi R;
+
+    R = new elmRelasi;
+    R->child = C;
+    R->next = nullptr;
+
+    return R;
+}
+
+
+void insertRelasi(addressParent P, addressChild C) {
+    addressRelasi R;
+    addressRelasi Q;
+
+    R = createRelasi(C);
+
+    if (P->relasi == nullptr) {
+        P->relasi = R;
+    } else {
+        Q = P->relasi;
+        while (Q->next != nullptr) {
+            Q = Q->next;
+        }
+        Q->next = R;
+    }
+}
+
+
+void deleteRelasi(addressParent P, addressChild C) {
+    addressRelasi prev;
+    addressRelasi curr;
+
+    prev = nullptr;
+    curr = P->relasi;
+
+    while (curr != nullptr && curr->child != C) {
         prev = curr;
         curr = curr->next;
     }
 
     if (curr != nullptr) {
-        addressRelasi R = curr->relasi;
-        while (R != nullptr) {
-            addressRelasi temp = R;
-            R = R->next;
-            deleteChild(LC, temp->child);
-            delete temp;
-        }
-
         if (prev == nullptr) {
-            LP.first = curr->next;
+            P->relasi = curr->next;
         } else {
             prev->next = curr->next;
         }
@@ -157,131 +372,65 @@ void deleteParent(ListParent &LP, ListChild &LC, string username) {
     }
 }
 
-// FIND
-addressParent findParent(ListParent LP, string username) {
-    addressParent P = LP.first;
-    while (P != nullptr) {
-        if (P->info.username == username)
-            return P;
-        P = P->next;
-    }
-    return nullptr;
-}
-
-addressChild findChild(ListChild LC, string namaItem) {
-    addressChild C = LC.first;
-    while (C != nullptr) {
-        if (C->info.namaItem == namaItem)
-            return C;
-        C = C->next;
-    }
-    return nullptr;
-}
 
 addressRelasi findRelasi(addressParent P, addressChild C) {
-    addressRelasi R = P->relasi;
+    addressRelasi R;
+
+    R = P->relasi;
     while (R != nullptr) {
-        if (R->child == C)
+        if (R->child == C) {
             return R;
+        }
         R = R->next;
     }
     return nullptr;
 }
 
-// SHOW
-void showAllParent(ListParent LP) {
-    addressParent P = LP.first;
-    while (P != nullptr) {
-        cout << "Username: " << P->info.username
-             << " | Gold: " << P->info.gold << endl;
-        P = P->next;
-    }
+
+void editRelasi(addressParent P, addressChild oldChild, addressChild newChild) {
+    deleteRelasi(P, oldChild);
+    insertRelasi(P, newChild);
 }
 
-void showAllChild(ListChild LC) {
-    addressChild C = LC.first;
-    while (C != nullptr) {
-        cout << "Item: " << C->info.namaItem
-             << " | Harga: " << C->info.harga
-             << " | Weapon: " << (C->info.isWeapon ? "Yes" : "No") << endl;
-        C = C->next;
+bool pindahKepemilikanItem(addressParent from, addressParent to, addressChild item) {
+    if (from == nullptr || to == nullptr) {
+        return false;
     }
+
+    if (from == to) {
+        return false;
+    }
+
+    if (findRelasi(from, item) == nullptr) {
+        return false;
+    }
+
+    deleteRelasi(from, item);
+    insertRelasi(to, item);
+
+    return true;
 }
 
 void showChildFromParent(addressParent P) {
-    addressRelasi R = P->relasi;
+    addressRelasi R;
+
+    R = P->relasi;
+    if (R == nullptr) {
+        cout << "(Tidak ada item)" << endl;
+        return;
+    }
+
     while (R != nullptr) {
         cout << "- " << R->child->info.namaItem << endl;
         R = R->next;
     }
 }
 
-void showAllParentWithChild(ListParent LP) {
-    addressParent P = LP.first;
-    while (P != nullptr) {
-        cout << "Player: " << P->info.username << endl;
-        showChildFromParent(P);
-        P = P->next;
-    }
-}
-
-void showAllChildWithParent(ListParent LP, ListChild LC) {
-    addressChild C;
-    addressParent P;
-    bool found;
-    string seller;
-
-    cout << "\n====================== MARKET ======================\n";
-    cout << "| Nama Item           | Harga | Weapon | Penjual       |\n";
-    cout << "====================================================\n";
-
-    C = LC.first;
-
-    if (C == nullptr) {
-        cout << "| (Tidak ada item di market)                        |\n";
-    }
-
-    while (C != nullptr) {
-
-        seller = "-";
-        found = false;
-
-        P = LP.first;
-        while (P != nullptr) {
-            if (!found && findRelasi(P, C) != nullptr) {
-                seller = P->info.username;
-                found = true;
-            }
-            P = P->next;
-        }
-
-        cout << "| ";
-        cout << C->info.namaItem;
-        cout << "              ";
-        cout << "| ";
-        cout << C->info.harga;
-        cout << "     ";
-
-        if (C->info.isWeapon)
-            cout << "| Yes    ";
-        else
-            cout << "| No     ";
-
-        cout << "| ";
-        cout << seller;
-        cout << "           ";
-
-        cout << "|\n";
-
-        C = C->next;
-    }
-
-    cout << "====================================================\n";
-}
-
 
 void showParentFromChild(ListParent LP, addressChild C) {
-    addressParent P = LP.first;
+    addressParent P;
+
+    P = LP.first;
     while (P != nullptr) {
         if (findRelasi(P, C) != nullptr) {
             cout << P->info.username << endl;
@@ -289,153 +438,188 @@ void showParentFromChild(ListParent LP, addressChild C) {
         }
         P = P->next;
     }
+
     cout << "None" << endl;
 }
 
-void showStatistikMarket(ListParent LP, ListChild LC) {
-    addressParent pGold;
-    addressParent pOut;
 
-    cout << "\n================= STATISTIK MARKET =================\n";
-    cout << "| Kategori                | Player        | Nilai |\n";
-    cout << "====================================================\n";
+void showAllParentWithChild(ListParent LP) {
+    addressParent P;
 
-    pGold = playerGoldTerbanyak(LP);
-    if (pGold != nullptr) {
-        cout << "| Gold Terbanyak          | ";
-        cout << pGold->info.username;
-        cout << "             | ";
-        cout << pGold->info.gold;
-        cout << "     |\n";
+    P = LP.first;
+    if (P == nullptr) {
+        cout << "(Tidak ada player)" << endl;
+        return;
     }
 
-    pOut = playerPengeluaranTerbesar(LP);
-    if (pOut != nullptr) {
-        cout << "| Pengeluaran Terbesar   | ";
-        cout << pOut->info.username;
-        cout << "             | ";
-        cout << pOut->info.totalOutcome;
-        cout << "     |\n";
+    while (P != nullptr) {
+        cout << "\nPlayer: " << P->info.username << endl;
+        cout << "-----------------------------" << endl;
+        showChildFromParent(P);
+        P = P->next;
     }
-
-    cout << "| Item Tanpa Relasi      | -              | ";
-    cout << countChildWithoutRelasi(LC, LP);
-    cout << "     |\n";
-
-    cout << "====================================================\n";
-
-    cout << "\nPlayer Tanpa Item:\n";
-    cout << "-------------------------\n";
-    playerTanpaItem(LP);
 }
 
 
+void showAllChildWithParent(ListParent LP, ListChild LC) {
+    addressChild C;
+    addressParent P;
+    bool found;
 
-// COUNT
+    cout << "\n=========================== MARKET ===========================\n";
+    cout << "Item\tHarga\tWeapon\tPenjual\n";
+    cout << "-------------------------------------------------------------\n";
+
+    C = LC.first;
+    if (C == nullptr) {
+        cout << "(Tidak ada item di market)" << endl;
+        cout << "=============================================================\n";
+        return;
+    }
+
+    while (C != nullptr) {
+        found = false;
+        P = LP.first;
+
+        while (P != nullptr && !found) {
+            if (findRelasi(P, C) != nullptr) {
+                cout << C->info.namaItem << "\t"
+                     << C->info.harga << "\t"
+                     << (C->info.isWeapon ? "Yes" : "No") << "\t"
+                     << P->info.username << endl;
+                found = true;
+            }
+            P = P->next;
+        }
+
+        if (!found) {
+            cout << C->info.namaItem << "\t"
+                 << C->info.harga << "\t"
+                 << (C->info.isWeapon ? "Yes" : "No") << "\t"
+                 << "-" << endl;
+        }
+
+        C = C->next;
+    }
+
+    cout << "=============================================================\n";
+}
+
+
 int countRelasiParent(addressParent P) {
-    int count = 0;
-    addressRelasi R = P->relasi;
+    int count;
+    addressRelasi R;
+
+    count = 0;
+    R = P->relasi;
+
     while (R != nullptr) {
         count++;
         R = R->next;
     }
+
     return count;
 }
+
 
 int countRelasiChild(ListParent LP, addressChild C) {
-    int count = 0;
-    addressParent P = LP.first;
+    int count;
+    addressParent P;
+
+    count = 0;
+    P = LP.first;
+
     while (P != nullptr) {
-        if (findRelasi(P, C) != nullptr)
+        if (findRelasi(P, C) != nullptr) {
             count++;
+        }
         P = P->next;
     }
+
     return count;
 }
+
 
 int countChildWithoutRelasi(ListChild LC, ListParent LP) {
-    int count = 0;
-    addressChild C = LC.first;
+    int count;
+    addressChild C;
+
+    count = 0;
+    C = LC.first;
+
     while (C != nullptr) {
-        if (countRelasiChild(LP, C) == 0)
+        if (countRelasiChild(LP, C) == 0) {
             count++;
+        }
         C = C->next;
     }
+
     return count;
 }
 
-//  EDIT RELASI
-void editRelasi(addressParent P, addressChild oldChild, addressChild newChild) {
-    deleteRelasi(P, oldChild);
-    insertRelasi(P, newChild);
-}
 
-//  MARKETPLACE FEATURE
-bool login(ListParent LP, string username, addressParent &currentPlayer) {
-    currentPlayer = findParent(LP, username);
-    return (currentPlayer != nullptr);
-}
+// statistik market functions (bersama)
 
-void logout(addressParent &currentPlayer) {
-    currentPlayer = nullptr;
-}
+void showStatistikMarket(ListParent LP, ListChild LC) {
+    addressParent g;
+    addressParent o;
 
-void infoPlayer(addressParent P) {
-    addressRelasi R;
+    cout << "\n==================== RINGKASAN STATISTIK ====================\n";
+    cout << "Kategori\t\tPlayer\t\tNilai\n";
+    cout << "------------------------------------------------------------\n";
 
-    cout << "\n=================== INFO PLAYER ===================\n";
-    cout << "Username       : " << P->info.username << endl;
-    cout << "Gold           : " << P->info.gold << endl;
-    cout << "Total Income   : " << P->info.totalIncome << endl;
-    cout << "Total Outcome  : " << P->info.totalOutcome << endl;
-
-    cout << "\nItem yang Sedang Dijual:\n";
-    cout << "-----------------------------------------------\n";
-    cout << "| Nama Item                                   |\n";
-    cout << "-----------------------------------------------\n";
-
-    R = P->relasi;
-
-    if (R == nullptr) {
-        cout << "| (Tidak ada item)                            |\n";
+    g = playerGoldTerbanyak(LP);
+    if (g != nullptr) {
+        cout << "Gold Terbanyak\t\t" << g->info.username << "\t\t" << g->info.gold << endl;
     }
 
-    while (R != nullptr) {
-        cout << "| ";
-        cout << R->child->info.namaItem;
-        cout << "                                     ";
-        cout << "|\n";
-
-        R = R->next;
+    o = playerPengeluaranTerbesar(LP);
+    if (o != nullptr) {
+        cout << "Pengeluaran Terbesar\t" << o->info.username << "\t\t" << o->info.totalOutcome << endl;
     }
 
-    cout << "-----------------------------------------------\n";
+    cout << "Item Tanpa Relasi\t-\t\t" << countChildWithoutRelasi(LC, LP) << endl;
+
+    cout << "------------------------------------------------------------\n";
+    cout << "\nPlayer tanpa item:\n";
+    playerTanpaItem(LP);
 }
 
 
+// marketplace functions (bersama)
 void jualItem(ListChild &LC, addressParent P, infotypeChild dataItem) {
-    addressChild C = createChild(dataItem);
+    addressChild C;
+
+    C = createChild(dataItem);
     insertChild(LC, C);
     insertRelasi(P, C);
 }
 
 bool beliItem(ListParent &LP, ListChild &LC, addressParent buyer, addressChild item) {
-    addressParent seller = LP.first;
+    addressParent seller;
+
+    seller = LP.first;
     while (seller != nullptr && findRelasi(seller, item) == nullptr) {
         seller = seller->next;
     }
 
-    if (seller == nullptr || seller == buyer)
+    if (seller == nullptr) {
         return false;
+    }
 
-    if (buyer->info.gold < item->info.harga)
+    if (seller == buyer) {
         return false;
+    }
 
-    buyer->info.gold -= item->info.harga;
-    buyer->info.totalOutcome += item->info.harga;
+    if (buyer->info.gold < item->info.harga) {
+        return false;
+    }
 
-    seller->info.gold += item->info.harga;
-    seller->info.totalIncome += item->info.harga;
+    buyer->info.gold = buyer->info.gold - item->info.harga;
+    buyer->info.totalOutcome = buyer->info.totalOutcome + item->info.harga;
+
+    seller->info.gold = seller->info.gold + item->info.harga;
+    seller->info.totalIncome = seller->info.totalIncome + item->info.harga;
 
     deleteRelasi(seller, item);
     deleteChild(LC, item);
@@ -443,61 +627,8 @@ bool beliItem(ListParent &LP, ListChild &LC, addressParent buyer, addressChild i
     return true;
 }
 
+
 void hapusItemSendiri(ListChild &LC, addressParent P, addressChild item) {
     deleteRelasi(P, item);
     deleteChild(LC, item);
-}
-
-void editItem(addressChild C, infotypeChild newData) {
-    C->info = newData;
-}
-
-void cariPlayer(ListParent LP, string username) {
-    addressParent P = findParent(LP, username);
-    if (P != nullptr) {
-        infoPlayer(P);
-    } else {
-        cout << "Player tidak ditemukan." << endl;
-    }
-}
-
-void cariItem(ListParent LP, ListChild LC, string namaItem) {
-    addressChild C = findChild(LC, namaItem);
-    if (C != nullptr) {
-        cout << "Item: " << C->info.namaItem << endl;
-        showParentFromChild(LP, C);
-    } else {
-        cout << "Item tidak ditemukan." << endl;
-    }
-}
-
-addressParent playerGoldTerbanyak(ListParent LP) {
-    addressParent max = LP.first;
-    addressParent P = LP.first;
-    while (P != nullptr) {
-        if (P->info.gold > max->info.gold)
-            max = P;
-        P = P->next;
-    }
-    return max;
-}
-
-addressParent playerPengeluaranTerbesar(ListParent LP) {
-    addressParent max = LP.first;
-    addressParent P = LP.first;
-    while (P != nullptr) {
-        if (P->info.totalOutcome > max->info.totalOutcome)
-            max = P;
-        P = P->next;
-    }
-    return max;
-}
-
-void playerTanpaItem(ListParent LP) {
-    addressParent P = LP.first;
-    while (P != nullptr) {
-        if (P->relasi == nullptr)
-            cout << P->info.username << endl;
-        P = P->next;
-    }
 }
