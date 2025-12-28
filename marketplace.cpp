@@ -3,12 +3,12 @@
 // Menu Functions (bersama)
 void menuUtama() {
     cout << "\n=== MENU UTAMA ===\n";
-    cout << "1. Insert Player\n";            // a
+    cout << "1. Insert Player\n";
     cout << "2. Login\n";
-    cout << "3. Show Market\n";              // n
+    cout << "3. Show Market\n";
     cout << "4. Menu Statistik\n";
-    cout << "5. Cari Player\n";              // g
-    cout << "6. Delete Player\n";            // d
+    cout << "5. Cari Player\n";
+    cout << "6. Delete Player\n";
     cout << "0. Keluar\n";
     cout << "Pilih: ";
 }
@@ -17,16 +17,16 @@ void menuUtama() {
 
 void menuPlayer() {
     cout << "\n=== MENU PLAYER ===\n";
-    cout << "1. Info Player\n";                   // l
-    cout << "2. Show Item Milik Player\n";        // l
-    cout << "3. Insert Child (Jual Item)\n";      // b
-    cout << "4. Insert Relasi\n";                 // c
-    cout << "5. Delete Relasi\n";                 // f
-    cout << "6. Delete Child\n";                  // e
-    cout << "7. Edit Relasi (Pindah Item)\n";     // s
-    cout << "8. Cari Child\n";                    // h
-    cout << "9. Cari Parent dari Child\n";        // o
-    cout << "10. Beli Item\n";                    // marketplace
+    cout << "1. Info Player\n";
+    cout << "2. Show Item Milik Player\n";
+    cout << "3. Insert Child (Jual Item)\n";
+    cout << "4. Insert Relasi\n";
+    cout << "5. Delete Relasi\n";
+    cout << "6. Delete Child\n";
+    cout << "7. Edit Relasi (Pindah Item)\n";
+    cout << "8. Cari Child\n";
+    cout << "9. Cari Parent dari Child\n";
+    cout << "10. Beli Item\n";
     cout << "11. Menu Hitung Relasi\n";
     cout << "0. Logout\n";
     cout << "Pilih: ";
@@ -42,6 +42,7 @@ void menuStatistikMarket() {
     cout << "4. Show Semua Parent\n";
     cout << "5. Show Semua Child\n";
     cout << "6. Show Parent + Child\n";
+    cout << "7. Count relation dari setiap element parent\n";
     cout << "0. Kembali\n";
     cout << "Pilih: ";
 }

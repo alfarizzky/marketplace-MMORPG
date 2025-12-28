@@ -74,6 +74,15 @@ int main() {
                     }
                     else if (s == 6) {
                         showAllParentWithChild(LP);
+                    } else if (s == 7) { // Count relasi setiap parent
+                        addressParent P = LP.first;
+                        while (P != nullptr) {
+                            cout << P->info.username
+                                 << " : "
+                                 << countRelasiParent(P)
+                                 << endl;
+                            P = P->next;
+                        }
                     }
 
                 } while (s != 0);
