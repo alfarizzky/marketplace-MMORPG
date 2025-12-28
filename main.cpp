@@ -3,23 +3,17 @@
 int main() {
     ListParent LP;
     ListChild LC;
-    addressParent currentPlayer;
-    bool keluar;
-    int pilih;
-    int pilihPlayer;
-    int ps;
+    addressParent currentPlayer = nullptr;
+    bool keluar = false;
 
     createListParent(LP);
     createListChild(LC);
 
-    currentPlayer = nullptr;
-    keluar = false;
-
-    while (keluar == false) {
+    while (!keluar) {
 
         /* ================= MENU UTAMA ================= */
         if (currentPlayer == nullptr) {
-
+            int pilih;
             menuUtama();
             cin >> pilih;
 
@@ -27,211 +21,198 @@ int main() {
                 keluar = true;
             }
 
-            else if (pilih == 1) {
+            else if (pilih == 1) { // Insert Parent
                 infotypeParent p;
                 cout << "Username: ";
                 cin >> p.username;
+                cout << "Gold awal: ";
+                cin >> p.gold;
+                p.totalIncome = 0;
+                p.totalOutcome = 0;
 
-                if (findParent(LP, p.username) != nullptr) {
-                    cout << "Username sudah terdaftar." << endl;
-                } else {
-                    cout << "Gold awal: ";
-                    cin >> p.gold;
-                    p.totalIncome = 0;
-                    p.totalOutcome = 0;
-
-                    insertParent(LP, createParent(p));
-                    cout << "Player berhasil didaftarkan." << endl;
-                }
+                insertParent(LP, createParent(p));
+                cout << "Player ditambahkan.\n";
             }
 
-            else if (pilih == 2) {
-                string username;
+            else if (pilih == 2) { // Login
+                string user;
                 cout << "Username: ";
-                cin >> username;
-
-                if (login(LP, username, currentPlayer) == true) {
-                    cout << "Login berhasil." << endl;
-                } else {
-                    cout << "Login gagal." << endl;
-                }
+                cin >> user;
+                if (login(LP, user, currentPlayer))
+                    cout << "Login berhasil.\n";
+                else
+                    cout << "Login gagal.\n";
             }
 
-            else if (pilih == 3) {
+            else if (pilih == 3) { // Show Market
                 showAllChildWithParent(LP, LC);
             }
 
-            else if (pilih == 4) {
-                ps = -1;
-                while (ps != 0) {
+            else if (pilih == 4) { // Statistik
+                int s;
+                do {
                     menuStatistikMarket();
-                    cin >> ps;
+                    cin >> s;
 
-                    if (ps == 1) {
-                        showStatistikMarket(LP, LC);
+                    if (s == 1) {
+                        addressParent p = playerGoldTerbanyak(LP);
+                        if (p) cout << p->info.username << " : " << p->info.gold << endl;
                     }
-                    else if (ps == 2) {
+                    else if (s == 2) {
+                        addressParent p = playerPengeluaranTerbesar(LP);
+                        if (p) cout << p->info.username << " : " << p->info.totalOutcome << endl;
+                    }
+                    else if (s == 3) {
+                        cout << "Child tanpa relasi: "
+                             << countChildWithoutRelasi(LC, LP) << endl;
+                    }
+                    else if (s == 4) {
                         showAllParent(LP);
                     }
-                    else if (ps == 3) {
+                    else if (s == 5) {
                         showAllChild(LC);
                     }
-                    else if (ps == 4) {
+                    else if (s == 6) {
                         showAllParentWithChild(LP);
                     }
-                    else if (ps == 0) {
-                        /* kembali ke menu utama */
-                    }
-                    else {
-                        cout << "Pilihan tidak valid." << endl;
-                    }
-                }
+
+                } while (s != 0);
             }
 
-            else if (pilih == 5) {
+            else if (pilih == 5) { // Find Parent
                 string user;
-                cout << "Username player: ";
+                cout << "Username: ";
                 cin >> user;
                 cariPlayer(LP, user);
             }
 
-            else {
-                cout << "Pilihan menu tidak valid." << endl;
+            else if (pilih == 6) { // Delete Parent
+                string user;
+                cout << "Username yang dihapus: ";
+                cin >> user;
+                deleteParent(LP, LC, user);
+                cout << "Delete parent selesai.\n";
             }
         }
 
         /* ================= MENU PLAYER ================= */
         else {
-
+            int pilih;
             menuPlayer();
-            cin >> pilihPlayer;
+            cin >> pilih;
 
-            if (pilihPlayer == 1) {
+            if (pilih == 0) {
+                logout(currentPlayer);
+            }
+
+            else if (pilih == 1) {
                 infoPlayer(currentPlayer);
             }
 
-            else if (pilihPlayer == 2) {
-                showAllChildWithParent(LP, LC);
-                cout << "Gold kamu: " << currentPlayer->info.gold << endl;
+            else if (pilih == 2) {
+                showChildFromParent(currentPlayer);
             }
 
-            else if (pilihPlayer == 3) {
-                infotypeChild item;
-                cout << "Nama Item: ";
-                cin >> item.namaItem;
+            else if (pilih == 3) { // Insert Child
+                infotypeChild c;
+                cout << "Nama item: ";
+                cin >> c.namaItem;
                 cout << "Harga: ";
-                cin >> item.harga;
-                cout << "Weapon (1=ya, 0=tidak): ";
-                cin >> item.isWeapon;
-
-                jualItem(LC, currentPlayer, item);
-                cout << "Item berhasil dijual." << endl;
+                cin >> c.harga;
+                cout << "Weapon (1/0): ";
+                cin >> c.isWeapon;
+                insertChild(LC, createChild(c));
+                cout << "Child ditambahkan.\n";
             }
 
-            else if (pilihPlayer == 4) {
-                string namaItem;
-                cout << "Nama item: ";
-                cin >> namaItem;
-
-                addressChild C;
-                C = findChild(LC, namaItem);
-
-                if (C != nullptr && beliItem(LP, LC, currentPlayer, C) == true) {
-                    cout << "Item berhasil dibeli." << endl;
-                } else {
-                    cout << "Gagal membeli item." << endl;
-                }
-            }
-
-            else if (pilihPlayer == 5) {
-                string namaItem;
-                cout << "Nama item: ";
-                cin >> namaItem;
-
-                addressChild C;
-                C = findChild(LC, namaItem);
-
-                if (C != nullptr && findRelasi(currentPlayer, C) != nullptr) {
-                    hapusItemSendiri(LC, currentPlayer, C);
-                    cout << "Item berhasil dihapus." << endl;
-                } else {
-                    cout << "Item bukan milikmu atau tidak ditemukan." << endl;
-                }
-            }
-
-            else if (pilihPlayer == 6) {
+            else if (pilih == 4) { // Insert Relasi
                 string item;
-                string target;
+                cout << "Nama item: ";
+                cin >> item;
+                addressChild C = findChild(LC, item);
+                if (C) insertRelasi(currentPlayer, C);
+            }
 
+            else if (pilih == 5) { // Delete Relasi
+                string item;
+                cout << "Nama item: ";
+                cin >> item;
+                addressChild C = findChild(LC, item);
+                if (C) deleteRelasi(currentPlayer, C);
+            }
+
+            else if (pilih == 6) { // Delete Child
+                string item;
+                cout << "Nama item: ";
+                cin >> item;
+                addressChild C = findChild(LC, item);
+                if (C && countRelasiChild(LP, C) == 0) {
+                    deleteChild(LC, C);
+                    cout << "Child dihapus.\n";
+                } else {
+                    cout << "Hapus relasi dulu.\n";
+                }
+            }
+
+            else if (pilih == 7) { // Edit Relasi
+                string item, target;
                 cout << "Nama item: ";
                 cin >> item;
                 cout << "Pindah ke player: ";
                 cin >> target;
 
-                addressChild C;
-                addressParent T;
-
-                C = findChild(LC, item);
-                T = findParent(LP, target);
-
-                if (C != nullptr && T != nullptr &&
-                    pindahKepemilikanItem(currentPlayer, T, C) == true) {
-                    cout << "Item berhasil dipindahkan." << endl;
-                } else {
-                    cout << "Gagal memindahkan item." << endl;
-                }
+                addressChild C = findChild(LC, item);
+                addressParent T = findParent(LP, target);
+                if (C && T) pindahKepemilikanItem(currentPlayer, T, C);
             }
 
-            else if (pilihPlayer == 7) {
-                string user;
-                cout << "Username player: ";
-                cin >> user;
-                cariPlayer(LP, user);
-            }
-
-            else if (pilihPlayer == 8) {
+            else if (pilih == 8) {
                 string item;
                 cout << "Nama item: ";
                 cin >> item;
                 cariItem(LP, LC, item);
             }
 
-            else if (pilihPlayer == 9) {
+            else if (pilih == 9) {
                 string item;
-                infotypeChild newData;
-
                 cout << "Nama item: ";
                 cin >> item;
-
-                addressChild C;
-                C = findChild(LC, item);
-
-                if (C != nullptr && findRelasi(currentPlayer, C) != nullptr) {
-                    cout << "Nama baru: ";
-                    cin >> newData.namaItem;
-                    cout << "Harga baru: ";
-                    cin >> newData.harga;
-                    cout << "Weapon (1=ya, 0=tidak): ";
-                    cin >> newData.isWeapon;
-
-                    editItem(C, newData);
-                    cout << "Item berhasil diedit." << endl;
-                } else {
-                    cout << "Item bukan milikmu atau tidak ditemukan." << endl;
-                }
+                addressChild C = findChild(LC, item);
+                if (C) showParentFromChild(LP, C);
             }
 
-            else if (pilihPlayer == 0) {
-                logout(currentPlayer);
-                cout << "Logout berhasil." << endl;
+            else if (pilih == 10) { // Beli Item
+                string item;
+                cout << "Nama item: ";
+                cin >> item;
+                addressChild C = findChild(LC, item);
+                if (C) beliItem(LP, LC, currentPlayer, C);
             }
 
-            else {
-                cout << "Pilihan menu tidak valid." << endl;
+            else if (pilih == 11) { // Menu Hitung
+                int h;
+                do {
+                    cout << "\n=== MENU HITUNG RELASI ===\n";
+                    cout << "1. Hitung relasi player ini\n";
+                    cout << "2. Hitung relasi child tertentu\n";
+                    cout << "0. Kembali\n";
+                    cout << "Pilih: ";
+                    cin >> h;
+
+                    if (h == 1)
+                        cout << countRelasiParent(currentPlayer) << endl;
+                    else if (h == 2) {
+                        string item;
+                        cout << "Nama item: ";
+                        cin >> item;
+                        addressChild C = findChild(LC, item);
+                        if (C) cout << countRelasiChild(LP, C) << endl;
+                    }
+                } while (h != 0);
             }
         }
     }
 
-    cout << "Terima kasih telah menggunakan marketplace." << endl;
+    cout << "Program selesai.\n";
     return 0;
 }

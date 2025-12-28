@@ -2,40 +2,50 @@
 
 // Menu Functions (bersama)
 void menuUtama() {
-    cout << "\n=== MARKETPLACE MMORPG ===\n";
-    cout << "1. Daftar Player\n";
+    cout << "\n=== MENU UTAMA ===\n";
+    cout << "1. Insert Player\n";            // a
     cout << "2. Login\n";
-    cout << "3. Lihat Market\n";
-    cout << "4. Statistik Market\n";
-    cout << "5. Cari Player\n";
+    cout << "3. Show Market\n";              // n
+    cout << "4. Menu Statistik\n";
+    cout << "5. Cari Player\n";              // g
+    cout << "6. Delete Player\n";            // d
     cout << "0. Keluar\n";
     cout << "Pilih: ";
 }
 
+
+
 void menuPlayer() {
     cout << "\n=== MENU PLAYER ===\n";
-    cout << "1. Info Player\n";
-    cout << "2. Lihat Market\n";
-    cout << "3. Jual Item\n";
-    cout << "4. Beli Item\n";
-    cout << "5. Hapus Item Sendiri\n";
-    cout << "6. Pindah Kepemilikan Item\n";
-    cout << "7. Cari Player\n";
-    cout << "8. Cari Item\n";
-    cout << "9. Edit Item\n";
+    cout << "1. Info Player\n";                   // l
+    cout << "2. Show Item Milik Player\n";        // l
+    cout << "3. Insert Child (Jual Item)\n";      // b
+    cout << "4. Insert Relasi\n";                 // c
+    cout << "5. Delete Relasi\n";                 // f
+    cout << "6. Delete Child\n";                  // e
+    cout << "7. Edit Relasi (Pindah Item)\n";     // s
+    cout << "8. Cari Child\n";                    // h
+    cout << "9. Cari Parent dari Child\n";        // o
+    cout << "10. Beli Item\n";                    // marketplace
+    cout << "11. Menu Hitung Relasi\n";
     cout << "0. Logout\n";
     cout << "Pilih: ";
 }
 
+
+
 void menuStatistikMarket() {
-    cout << "\n=== STATISTIK MARKET ===\n";
-    cout << "1. Ringkasan Statistik\n";
-    cout << "2. Semua Player\n";
-    cout << "3. Semua Item\n";
-    cout << "4. Player & Item\n";
+    cout << "\n=== MENU STATISTIK ===\n";
+    cout << "1. Player Gold Terbanyak\n";
+    cout << "2. Player Pengeluaran Terbesar\n";
+    cout << "3. Jumlah Child Tanpa Relasi\n";
+    cout << "4. Show Semua Parent\n";
+    cout << "5. Show Semua Child\n";
+    cout << "6. Show Parent + Child\n";
     cout << "0. Kembali\n";
     cout << "Pilih: ";
 }
+
 
 bool login(ListParent LP, string username, addressParent &currentPlayer) {
     currentPlayer = findParent(LP, username);
