@@ -60,6 +60,31 @@ Multi Linked List relations
 
 ## 🧠 Data Structure Design
 
+The system is implemented using a **Multi Linked List** data structure consisting of three main components:
+**Parent**, **Relation**, and **Child**.
+
+<div align="center">
+
+<img src="structureDesign.png" alt="Multi Linked List Structure Design" width="90%"/>
+
+</div>
+
+### 🔹 Description
+
+- **Parent List (Player)**  
+  Stores all players in the marketplace.  
+  Each player node contains player information and a pointer to its own relation list.
+
+- **Relation List**  
+  Acts as a connector between players and items.  
+  Each relation node stores a pointer to a child (item) owned by the player.
+
+- **Child List (Item)**  
+  Stores all items globally in the marketplace.  
+  Items are stored only once and ownership is managed through relation nodes.
+
+### 🔹 Relationship Flow
+
 ```text
 Player (Parent)
    |
@@ -70,13 +95,13 @@ Relation List
 Item (Child)
 ```
 
-| Component | Description |
-|---------|------------|
-| **Parent** | Player (username, gold, statistics) |
-| **Child** | Item (name, price, type) |
-| **Relation** | Ownership of items by players |
-| **ListParent** | Stores all players |
-| **ListChild** | Stores all items |
+This design allows:
+- One player to own multiple items
+- Items to be managed independently from ownership
+- Easy ownership transfer by modifying relation nodes only
+- No duplication of item data
+
+The structure fully follows the **Multi Linked List** concept commonly used in Data Structures courses.
 
 ---
 
