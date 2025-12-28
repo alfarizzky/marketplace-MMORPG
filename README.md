@@ -174,7 +174,7 @@ marketplace/
 
 ---
 
-## 👥 Author & Contributors
+## 👥 Authors
 
 <div align="center">
 
@@ -182,19 +182,19 @@ marketplace/
 <tr>
 
 <td align="center" width="33%">
-<a href="https://github.com/rizkidsaputra">
-<img src="https://github.com/rizkidsaputra.png" width="100px"/><br/>
-<b>Rizki D. Saputra</b>
-</a><br/>
-<sub>Main Developer</sub>
-</td>
-
-<td align="center" width="33%">
 <a href="https://github.com/alfarizzky">
 <img src="https://github.com/alfarizzky.png" width="100px"/><br/>
 <b>FLY</b>
 </a><br/>
-<sub>Contributor</sub>
+<sub>Repository Owner & Core Developer</sub>
+</td>
+
+<td align="center" width="33%">
+<a href="https://github.com/rizkidsaputra">
+<img src="https://github.com/rizkidsaputra.png" width="100px"/><br/>
+<b>Rizki D. Saputra</b>
+</a><br/>
+<sub>Core Developer</sub>
 </td>
 
 <td align="center" width="33%">
@@ -202,7 +202,7 @@ marketplace/
 <img src="https://github.com/ikan999.png" width="100px"/><br/>
 <b>FIZ</b>
 </a><br/>
-<sub>Contributor</sub>
+<sub>Core Developer</sub>
 </td>
 
 </tr>
@@ -210,16 +210,13 @@ marketplace/
 
 </div>
 
+
 ---
 
 ## ⚠️ Disclaimer
 
-**This project is for educational purposes only.**  
-Not intended for production or commercial use.
+This project was developed collaboratively as an academic assignment  
+for the **Data Structures** course.
 
----
+All contributors participated equally in the design and implementation.
 
-⭐ *If this project helps you, feel free to give it a star!*
-
-Made with pointers and logic  
-**Rizki D. Saputra**
